@@ -1,16 +1,12 @@
-import UIKit
-import Foundation
-
-
-
+import SwiftUI
 @propertyWrapper
-struct Transformed {
+public struct TextStatesWrapper {
     public var wrappedValue: String {
         get { get() }
         set { set(newValue) }
     }
-    
-    private var value: String
+ //MARK: The neccesary variables and enums
+    private var formatedString: String
     private var formatTo: StringCases
     public enum StringCases {
         case camelCase
@@ -19,23 +15,23 @@ struct Transformed {
     }
     
     init(wrappedValue: String, formatTo: StringCases) {
-        self.value = wrappedValue
+        self.formatedString = wrappedValue
         self.formatTo = formatTo
     }
-    
+//MARK: The function for receiving the value of the property:
     public func get() -> String {
-        return value
+        return formatedString
     }
-    
+//MARK: The function for updating the value of the property:
     public mutating func set(_ newValue: String) {
         switch formatTo {
         case .camelCase:
-            value = newValue.components(separatedBy: CharacterSet.alphanumerics.inverted)
+            formatedString = newValue.components(separatedBy: CharacterSet.alphanumerics.inverted)
                 .filter { !$0.isEmpty }
                 .map { $0.capitalized }
                 .joined()
         case .kebabCase :
-            value = newValue.components(separatedBy: CharacterSet.alphanumerics.inverted)
+            formatedString = newValue.components(separatedBy: CharacterSet.alphanumerics.inverted)
                 .filter { !$0.isEmpty }
                 .map { $0.capitalized }
                 .joined()
@@ -48,7 +44,7 @@ struct Transformed {
                     return $0 + String($1).lowercased()
                 }
         case .shakeCase:
-            value = newValue.components(separatedBy: CharacterSet.alphanumerics.inverted)
+            formatedString = newValue.components(separatedBy: CharacterSet.alphanumerics.inverted)
                 .filter { !$0.isEmpty }
                 .map { $0.capitalized }
                 .joined()
@@ -63,13 +59,3 @@ struct Transformed {
         }
     }
 }
-
-
-class MyClass {
-    @Transformed(formatTo: .kebabCase) var property = ""
-}
-
-let myClass = MyClass()
-
-myClass.property = "What are you doing"
-print(myClass.property)
